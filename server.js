@@ -6,12 +6,11 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 const passport = require('passport');
 
-
 const app = express();
 const { PORT, MONGODB_URI } = require('./config');
 
 const localStrategy = require('./passport/local');
-
+const jwtStrategy = require('./passport/jwt');
 
 const notesRouter = require('./routes/notes');
 const foldersRouter = require('./routes/folders');
@@ -19,16 +18,6 @@ const tagsRouter = require('./routes/tags');
 const usersRouter = require('./routes/users');
 const {router:authRouter} = require('./routes/auth');
 // Create an Express application
-
-
-
-
-
-
-
-
-
-
 
 // Log all requests. Skip logging during
 app.use(morgan(process.env.NODE_ENV === 'development' ? 'dev' : 'common', {
@@ -42,7 +31,7 @@ app.use(express.static('public'));
 app.use(express.json());
 
 passport.use(localStrategy);
-
+passport.use(jwtStrategy);
 
 
 
