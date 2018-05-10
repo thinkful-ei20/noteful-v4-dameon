@@ -100,7 +100,7 @@ router.put('/:id', (req, res, next) => {
 
   const updateFolder = { name , userId };
 
-  Folder.findByIdAndUpdate({_id:id,userId}, updateFolder, { new: true })
+  Folder.findOneAndUpdate({_id:id,userId}, updateFolder, { new: true })
     .then(result => {
       if (result) {
         res.json(result);
@@ -122,7 +122,7 @@ router.delete('/:id', (req, res, next) => {
   const { id } = req.params;
   const userId = req.user.id;
   // ON DELETE SET NULL equivalent
-  const folderRemovePromise = Folder.findByIdAndRemove({ _id: id, userId });  // NOTE **underscore** _id
+  const folderRemovePromise = Folder.findOneAndRemove({ _id: id, userId });  // NOTE **underscore** _id
   // ON DELETE CASCADE equivalent
   // const noteRemovePromise = Note.deleteMany({ folderId: id });
 

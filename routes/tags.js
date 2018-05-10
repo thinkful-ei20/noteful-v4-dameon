@@ -100,7 +100,7 @@ router.put('/:id', (req, res, next) => {
 
   const updateTag = { name };
   console.log('hello');
-  Tag.findByIdAndUpdate({_id:id, userId},updateTag, { new: true })
+  Tag.findOneAndUpdate({_id:id, userId},updateTag, { new: true })
     .then(result => {
       if (result) {
         res.json(result);
@@ -121,7 +121,7 @@ router.put('/:id', (req, res, next) => {
 router.delete('/:id', (req, res, next) => {
   const { id } = req.params;
   const userId = req.user.id;
-  const tagRemovePromise = Tag.findByIdAndRemove({_id:id,userId});
+  const tagRemovePromise = Tag.findOneAndRemove({_id:id,userId});
   // const tagRemovePromise = Tag.remove({ _id: id }); // NOTE **underscore** _id
 
   const noteUpdatePromise = Note.updateMany(

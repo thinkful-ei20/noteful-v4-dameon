@@ -13,6 +13,49 @@ const passport = require('passport');
 router.use('/', passport.authenticate('jwt', { session: false, failWithError: true }));
 
 
+
+function validateFolderId(folderId, userId) {
+  if (folderId === undefined) {
+    return Promise.resolve();
+  }
+  if (!mongoose.Types.ObjectId.isValid(folderId)) {
+    const err = new Error('The `folderId` is not valid');
+    err.status = 400;
+    return Promise.reject(err);
+  }
+  return Folder.count({ _id: folderId, userId })
+    .then(count => {
+      if (count === 0) {
+        const err = new Error('The `folderId` is not valid');
+        err.status = 400;
+        return Promise.reject(err);
+      }
+    });
+}
+
+function validateTagIds(tags, userId) {
+  if (tags === undefined) {
+    return Promise.resolve();
+  }
+  if (!Array.isArray(tags)) {
+    const err = new Error('The `tags` must be an array');
+    err.status = 400;
+    return Promise.reject(err);
+  }
+  return Tag.find({ $and: [{ _id: { $in: tags }, userId }] })
+    .then(results => {
+      if (tags.length !== results.length) {
+        const err = new Error('The `tags` contains an invalid id');
+        err.status = 400;
+        return Promise.reject(err);
+      }
+    });
+}
+
+
+
+
+
 /* ========== GET/READ ALL ITEMS ========== */
 router.get('/', (req, res, next) => {
   const { searchTerm, folderId, tagId } = req.query;
@@ -98,7 +141,11 @@ router.post('/', (req, res, next) => {
     });
   }
 
-  Note.create({ title, content, folderId, tags, userId })
+  Promise.all([
+    validateFolderId(folderId, userId),
+    validateTagIds(tags, userId)
+  ])
+    .then(() =>  Note.create({ title, content, folderId, tags, userId }))
     .then(result => {
       res
         .location(`${req.originalUrl}/${result.id}`)
@@ -144,8 +191,11 @@ router.put('/:id', (req, res, next) => {
       }
     });
   }
-
-  Note.findByIdAndUpdate(id, { title, content, folderId, tags, userId }, { new: true })
+  Promise.all([
+    validateFolderId(folderId, userId),
+    validateTagIds(tags, userId)
+  ])
+    .then(() => Note.findOneAndUpdate(id, { title, content, folderId, tags, userId }, { new: true }))
     .then(result => {
       if (result) {
         res.json(result);
@@ -163,7 +213,7 @@ router.delete('/:id', (req, res, next) => {
   const { id } = req.params;
   const {userId} = req.user.id;
 
-  Note.findByIdAndRemove({_id:id,userId})
+  Note.findOneAndRemove({_id:id,userId})
     .then(() => {
       res.status(204).end();
     })
