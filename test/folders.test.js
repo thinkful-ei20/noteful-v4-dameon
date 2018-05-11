@@ -1,178 +1,239 @@
-// 'use strict';
-// const app = require('../server');
-// const chai = require('chai');
-// const chaiHttp = require('chai-http');
-// const mongoose = require('mongoose');
+'use strict';
+const app = require('../server');
+const chai = require('chai');
+const chaiHttp = require('chai-http');
+const mongoose = require('mongoose');
 
-// const { TEST_MONGODB_URI } = require('../config');
+const { TEST_MONGODB_URI, JWT_SECRET } = require('../config');
 
-// const Folder = require('../models/folder');
-// const seedFolders = require('../db/seed/folders');
+const Folder = require('../models/folder');
+const seedFolders = require('../db/seed/folders');
+const User = require('../models/users');
+const seedUsers = require('../db/seed/users');
+const jwt = require('jsonwebtoken');
+const expect = chai.expect;
+let token;
+let user;
 
-// console.log('TESTING RESULTS:', TEST_MONGODB_URI);
+
+chai.use(chaiHttp);
+
+describe('Noteful API - Folders', function () {
+  before(function () {
+    return mongoose.connect(TEST_MONGODB_URI)
+      .then(() =>  mongoose.connection.db.dropDatabase());
+  });
+  
+
+  // beforeEach(function () {
+  //   return Promise.all([
+  //     User.insertMany(seedUsers),
+  //     Folder.insertMany(seedFolders),
+  //     Folder.ensureIndexes()
+  //   ]).then(([users]) => {
+  //     user = users[0];
+  //     token = jwt.sign({ user }, JWT_SECRET, { subject: user.username });
+      
+  //   });
+  // });
+  beforeEach(function () {
+    return Promise.all(seedUsers.map(user => User.hashPassword(user.password)))
+      .then(digests => {
+        seedUsers.forEach((user, i) => user.password = digests[i]);
+        return Promise.all([
+          User.insertMany(seedUsers),
+          Folder.insertMany(seedFolders),
+          Folder.createIndexes()
+        ]);
+      })
+      .then(([users]) => {
+        user = users[0];
+        token = jwt.sign({ user }, JWT_SECRET, { subject: user.username });
+      });
+  });
+
+  afterEach(function () {
+    return mongoose.connection.db.dropDatabase();
+  });
+
+  after(function () {
+    return mongoose.disconnect();
+  });
+
+  //describe('GET /api/folders', function () {
+  //   it('should return the correct number of folders', function () {
+  //     const dbPromise = Folder.find({ userId: user.id });
+  //     const apiPromise = chai.request(app)
+  //       .get('/api/folders')
+  //       .set('Authorization', `Bearer ${token}`); // <<== Add this
+
+  //     return Promise.all([dbPromise, apiPromise])
+  //       .then(([data, res]) => {
+  //         expect(res).to.have.status(200);
+  //         expect(res).to.be.json;
+  //         expect(res.body).to.be.a('array');
+  //         expect(res.body).to.have.length(data.length);
+  //       });
+  //   });
+  // });
+
+  //   it('should return a list with the correct right fields', function () {
+  //     const dbPromise = Folder.find({ userId: user.id }); // <<== Add filter on User Id
+  //     const apiPromise = chai.request(app)
+  //       .get('/api/folders')
+  //       .set('Authorization', `Bearer ${token}`);
+  //     return Promise.all([dbPromise,apiPromise])
+  //       .then(([data, res]) => {
+  //         expect(res).to.have.status(200);
+  //         expect(res).to.be.json;
+  //         expect(res.body).to.be.a('array');
+  //         expect(res.body).to.have.length(data.length);
+  //         res.body.forEach(function (item) {
+  //           expect(item).to.be.a('object');
+  //           expect(item).to.have.keys('id', 'name', 'createdAt', 'updatedAt','userId');
+  //         });
+  //       });
+  //   });
+  // });
 
 
-// const expect = chai.expect;
+// describe('GET /api/folders/:id', function () {
+//   let id = '111111111111111111111100';
+//   it('should return correct folder', function () {
+//     const dbPromise = Folder.findOne({ _id:id, userId: user.id });
+//     const apiPromise = chai.request(app)
+//       .get('/api/folders')
+//       .set('Authorization', `Bearer ${token}`);
+//     return Promise.all([dbPromise,apiPromise])
+//       .then(([data, res]) => {
+      
+      
+        
+//         expect(res).to.have.status(200);
+//         expect(res).to.be.json;
 
-// chai.use(chaiHttp);
+//         expect(res.body[0]).to.be.an('object');
+//         expect(res.body[0]).to.have.keys('id', 'name', 'createdAt', 'updatedAt','userId');
 
-// describe('Noteful API - Folders', function () {
-//   before(function () {
-//     return mongoose.connect(TEST_MONGODB_URI)
-//       .then(() => mongoose.connection.db.dropDatabase());
+//         expect(res.body[0].id).to.equal(data.id);
+//         expect(res.body[0].name).to.equal(data.name);
+//       });
+//   });
+// });
+
+//   it.only('should respond with a 400 for an invalid ID', function () {
+//     const badId = '99-99-99';
+//     const dbPromise = Folder.findOne({ _id:badId, userId: user.id });
+//     const apiPromise = chai.request(app)
+//       .get('/api/folders/99-99-99')
+//       .set('Authorization', `Bearer ${token}`);
+//     return Promise.all([dbPromise,apiPromise])
+//       .then(([data, res]) => {
+
+      
+//         expect(res).to.have.status(400);
+//         expect(res.body.message).to.eq('The `id` is not valid');
+//       });
+//   });
+// });
+
+//   it('should respond with a 404 for non-existant id', function () {
+//     const badId = 'AAAAAAAAAAAAAAAAAAAAAAAA';
+//     const dbPromise = Folder.findOne({ _id:badId, userId: user.id });
+//     const apiPromise = chai.request(app)
+//       .get('/api/folders/AAAAAAAAAAAAAAAAAAAAAAAA')
+//       .set('Authorization', `Bearer ${token}`);
+//     return Promise.all([dbPromise,apiPromise])
+//       .then(([data, res]) => {
+
+//         expect(res).to.have.status(404);
+//       });
 //   });
 
-//   beforeEach(function () {
-//     return Folder.insertMany(seedFolders)
-//       .then(() => Folder.createIndexes());
+// });});
+
+// describe('POST /api/folders', function () {
+
+//   it('should create and return a new item when provided valid data', function () {
+//     const newItem = {
+//       'name': 'newFolder',
+//       'userId':user.id
+//     };
+//     let body;
+//     const apiPromise = chai.request(app)
+//       .post('/api/folders')
+//       .set('Authorization', `Bearer ${token}`)
+//       .send(newItem);
+//     return Promise.all([apiPromise])
+             
+//       .then(function ([ res]) {
+//         body = res.body;
+//         expect(res).to.have.status(201);
+//         expect(res).to.have.header('location');
+          
+//         expect(res).to.be.json;
+          
+//         expect(body).to.be.a('object');
+          
+//         expect(body).to.include.keys('id', 'name');
+          
+//         return Folder.findById(body.id);
+//       })
+//       .then(data => {
+          
+//         expect(body.id).to.equal(data.id);
+//         expect(body.name).to.equal(data.name);
+//       });
 //   });
+// });
 
-//   afterEach(function () {
-//     return mongoose.connection.db.dropDatabase();
+//   it('should return an error when missing "name" field', function () {
+//     const newItem = {
+//       'foo': 'bar'
+//     };
+//     const apiPromise = chai.request(app)
+//       .get('/api/folders')
+//       .set('Authorization', `Bearer ${token}`)
+//       .send(newItem)
+//       .then(()=>{
+//         return Promise.all([apiPromise]);
+//       })
+//       .then(function([res]){
+//         console.log(res);
+//         expect(res).to.have.status(400);
+//         expect(res).to.be.json;
+//         expect(res.body).to.be.a('object');
+//         expect(res.body.message).to.equal('Missing `name` in request body');
+//       });
 //   });
+// });
 
-//   after(function () {
-//     return mongoose.disconnect();
-//   });
 
-//   describe('GET /api/folders', function () {
 
-//     it('should return the correct number of folders', function () {
-//       return Promise.all([
-//         Folder.find(),
-//         chai.request(app).get('/api/folders')
-//       ])
-//         .then(([data, res]) => {
-//           expect(res).to.have.status(200);
-//           expect(res).to.be.json;
-//           expect(res.body).to.be.a('array');
-//           expect(res.body).to.have.length(data.length);
-//         });
-//     });
 
-//     it('should return a list with the correct right fields', function () {
-//       return Promise.all([
-//         Folder.find(),
-//         chai.request(app).get('/api/folders')
-//       ])
-//         .then(([data, res]) => {
-//           expect(res).to.have.status(200);
-//           expect(res).to.be.json;
-//           expect(res.body).to.be.a('array');
-//           expect(res.body).to.have.length(data.length);
-//           res.body.forEach(function (item) {
-//             expect(item).to.be.a('object');
-//             expect(item).to.have.keys('id', 'name', 'createdAt', 'updatedAt');
-//           });
-//         });
-//     });
 
-//   });
-
-//   describe('GET /api/folders/:id', function () {
-
-//     it('should return correct folder', function () {
-//       let data;
-//       return Folder.findOne().select('id name')
-//         .then(_data => {
-//           data = _data;
-//           return chai.request(app).get(`/api/folders/${data.id}`);
-//         })
-//         .then((res) => {
-//           expect(res).to.have.status(200);
-//           expect(res).to.be.json;
-
-//           expect(res.body).to.be.an('object');
-//           expect(res.body).to.have.keys('id', 'name', 'createdAt', 'updatedAt');
-
-//           expect(res.body.id).to.equal(data.id);
-//           expect(res.body.name).to.equal(data.name);
-//         });
-//     });
-
-//     it('should respond with a 400 for an invalid ID', function () {
-//       const badId = '99-99-99';
-
-//       return chai.request(app)
-//         .get(`/api/folders/${badId}`)
-//         .catch(err => err.response)
-//         .then(res => {
-//           expect(res).to.have.status(400);
-//           expect(res.body.message).to.eq('The `id` is not valid');
-//         });
-//     });
-
-//     it('should respond with a 404 for non-existant id', function () {
-
-//       return chai.request(app)
-//         .get('/api/folders/AAAAAAAAAAAAAAAAAAAAAAAA')
-//         .catch(err => err.response)
-//         .then(res => {
-//           expect(res).to.have.status(404);
-//         });
-//     });
-
-//   });
-
-//   describe('POST /api/folders', function () {
-
-//     it('should create and return a new item when provided valid data', function () {
-//       const newItem = {
-//         'name': 'newFolder',
-//       };
-//       let body;
-//       return chai.request(app)
-//         .post('/api/folders')
-//         .send(newItem)
-//         .then(function (res) {
-//           body = res.body;
-//           expect(res).to.have.status(201);
-//           expect(res).to.have.header('location');
-//           expect(res).to.be.json;
-//           expect(body).to.be.a('object');
-//           expect(body).to.include.keys('id', 'name');
-//           return Folder.findById(body.id);
-//         })
-//         .then(data => {
-//           expect(body.id).to.equal(data.id);
-//           expect(body.name).to.equal(data.name);
-//         });
-//     });
-
-//     it('should return an error when missing "name" field', function () {
-//       const newItem = {
-//         'foo': 'bar'
-//       };
-
-//       return chai.request(app)
-//         .post('/api/folders')
-//         .send(newItem)
-//         .catch(err => err.response)
-//         .then(res => {
-//           expect(res).to.have.status(400);
-//           expect(res).to.be.json;
-//           expect(res.body).to.be.a('object');
-//           expect(res.body.message).to.equal('Missing `name` in request body');
-//         });
-//     });
 
 //     it('should return an error when given a duplicate name', function () {
 
-//       return Folder.findOne().select('id name')
-//         .then(data => {
-//           const newItem = { 'name': data.name };
-//           return chai.request(app).post('/api/folders').send(newItem);
-//         })
-//         .catch(err => err.response)
-//         .then(res => {
+//       const newItem = {
+//         'name': 'Archive'
+//       };
+
+
+//       const apiPromise = chai.request(app)
+//         .get('/api/folders')
+//         .set('Authorization', `Bearer ${token}`)
+//         .send(newItem)
+//         .then(function(res){
+          
 //           expect(res).to.have.status(400);
 //           expect(res).to.be.json;
 //           expect(res.body).to.be.a('object');
 //           expect(res.body.message).to.equal('Folder name already exists');
 //         });
 //     });
-
 //   });
+// });
 
 //   describe('PUT /api/folders/:id', function () {
 

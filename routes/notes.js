@@ -57,6 +57,7 @@ function validateTagIds(tags, userId) {
 
 
 
+
 /* ========== GET/READ ALL ITEMS ========== */
 router.get('/', (req, res, next) => {
   const { searchTerm, folderId, tagId } = req.query;
