@@ -8,6 +8,6 @@ exports.TEST_MONGODB_URI = process.env.TEST_MONGODB_URI ||'mongodb://dev:dev@ds1
 // || 'mongodb://dev:dev@ds111430.mlab.com:11430/noteful-test' || process.env.TEST_MONGODB_URI || 'mongodb://localhost/noteful-test';
 
  
-
+ 
 exports.JWT_SECRET = process.env.JWT_SECRET || 'secret';
 exports.JWT_EXPIRY = process.env.JWT_EXPIRY || '7d';
