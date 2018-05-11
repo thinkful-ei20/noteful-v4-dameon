@@ -156,7 +156,7 @@ describe('Noteful API - Notes', function () {
     //       expect(res.body).to.be.a('array');
     //       expect(res.body).to.have.length(data.length);
     //     });
-    // });
+    // }); 
 
     // it('should return an empty array for an incorrect query', function () {
     //   const searchTerm = 'NotValid';
