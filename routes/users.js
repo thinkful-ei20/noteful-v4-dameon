@@ -7,7 +7,7 @@ const User = require('../models/users');
 const mongoose = require('mongoose');
 
 router.post('/', function(req,res,next) {
-  let {username , fullname, password} = req.body;
+ 
 
   const requiredFields = ['username', 'password'];
   const missingField = requiredFields.find(field => !(field in req.body));
@@ -16,7 +16,7 @@ router.post('/', function(req,res,next) {
     return res.status(422).json({
       code: 422,
       reason: 'ValidationError',
-      message: 'Missing field',
+      message: `Missing '${missingField}' in request body`,
       location: missingField
     });
   }
@@ -30,7 +30,7 @@ router.post('/', function(req,res,next) {
     return res.status(422).json({
       code: 422,
       reason: 'ValidationError',
-      message: 'Incorrect field type: expected string',
+      message: `Field: '${nonStringField}' must be type String`,
       location: nonStringField
     });
   }
@@ -51,7 +51,7 @@ router.post('/', function(req,res,next) {
     return res.status(422).json({
       code: 422,
       reason: 'ValidationError',
-      message: 'Cannot start or end with whitespace',
+      message: `Field: '${nonTrimmedField}' cannot start or end with whitespace`,
       location: nonTrimmedField
     });
   }
@@ -83,13 +83,14 @@ router.post('/', function(req,res,next) {
       code: 422,
       reason: 'ValidationError',
       message: tooSmallField
-        ? `Must be at least ${sizedFields[tooSmallField]
-          .min} characters long`
-        : `Must be at most ${sizedFields[tooLargeField]
-          .max} characters long`,
+        ? `Field: '${tooSmallField}' must be at least ${sizedFields[tooSmallField].min} characters long`
+        : `Field: '${tooLargeField}' must be at most ${sizedFields[tooLargeField].max} characters long`,
       location: tooSmallField || tooLargeField
     });
   }
+  let { username, password, fullname = '' } = req.body;
+  fullname = fullname.trim();
+
 
   return User.hashPassword(password)
     .then(digest => {

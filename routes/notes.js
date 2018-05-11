@@ -6,7 +6,8 @@ const router = express.Router();
 const mongoose = require('mongoose');
 
 const Note = require('../models/note');
-
+const Folder = require('../models/folder');
+const Tag = require('../models/tag');
 const passport = require('passport');
 
 //protecting the endpoints
