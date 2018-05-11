@@ -60,97 +60,93 @@ describe('Noteful API - Folders', function () {
     return mongoose.disconnect();
   });
 
-  //describe('GET /api/folders', function () {
-  //   it('should return the correct number of folders', function () {
-  //     const dbPromise = Folder.find({ userId: user.id });
-  //     const apiPromise = chai.request(app)
-  //       .get('/api/folders')
-  //       .set('Authorization', `Bearer ${token}`); // <<== Add this
+  describe('GET /api/folders', function () {
+    it('should return the correct number of folders', function () {
+      const dbPromise = Folder.find({ userId: user.id });
+      const apiPromise = chai.request(app)
+        .get('/api/folders')
+        .set('Authorization', `Bearer ${token}`); // <<== Add this
 
-  //     return Promise.all([dbPromise, apiPromise])
-  //       .then(([data, res]) => {
-  //         expect(res).to.have.status(200);
-  //         expect(res).to.be.json;
-  //         expect(res.body).to.be.a('array');
-  //         expect(res.body).to.have.length(data.length);
-  //       });
-  //   });
-  // });
+      return Promise.all([dbPromise, apiPromise])
+        .then(([data, res]) => {
+          expect(res).to.have.status(200);
+          expect(res).to.be.json;
+          expect(res.body).to.be.a('array');
+          expect(res.body).to.have.length(data.length);
+        });
+    });
+ 
 
-  //   it('should return a list with the correct right fields', function () {
-  //     const dbPromise = Folder.find({ userId: user.id }); // <<== Add filter on User Id
-  //     const apiPromise = chai.request(app)
-  //       .get('/api/folders')
-  //       .set('Authorization', `Bearer ${token}`);
-  //     return Promise.all([dbPromise,apiPromise])
-  //       .then(([data, res]) => {
-  //         expect(res).to.have.status(200);
-  //         expect(res).to.be.json;
-  //         expect(res.body).to.be.a('array');
-  //         expect(res.body).to.have.length(data.length);
-  //         res.body.forEach(function (item) {
-  //           expect(item).to.be.a('object');
-  //           expect(item).to.have.keys('id', 'name', 'createdAt', 'updatedAt','userId');
-  //         });
-  //       });
-  //   });
-  // });
+    it('should return a list with the correct right fields', function () {
+      const dbPromise = Folder.find({ userId: user.id }); // <<== Add filter on User Id
+      const apiPromise = chai.request(app)
+        .get('/api/folders')
+        .set('Authorization', `Bearer ${token}`);
+      return Promise.all([dbPromise,apiPromise])
+        .then(([data, res]) => {
+          expect(res).to.have.status(200);
+          expect(res).to.be.json;
+          expect(res.body).to.be.a('array');
+          expect(res.body).to.have.length(data.length);
+          res.body.forEach(function (item) {
+            expect(item).to.be.a('object');
+            expect(item).to.have.keys('id', 'name', 'createdAt', 'updatedAt','userId');
+          });
+        });
+    });
+  });
 
 
-// describe('GET /api/folders/:id', function () {
-//   let id = '111111111111111111111100';
-//   it('should return correct folder', function () {
-//     const dbPromise = Folder.findOne({ _id:id, userId: user.id });
-//     const apiPromise = chai.request(app)
-//       .get('/api/folders')
-//       .set('Authorization', `Bearer ${token}`);
-//     return Promise.all([dbPromise,apiPromise])
-//       .then(([data, res]) => {
-      
-      
+  describe('GET /api/folders/:id', function () {
+   
+    
+    it('should return correct folder', function () {
+      const dbPromise = Folder.findOne({  userId: user.id });
+      const apiPromise = chai.request(app)
+        .get('/api/folders/111111111111111111111100')
+        .set('Authorization', `Bearer ${token}`);
+      return Promise.all([dbPromise,apiPromise])
         
-//         expect(res).to.have.status(200);
-//         expect(res).to.be.json;
+        .then(([data, res]) => {
+          expect(res).to.have.status(200);
+          expect(res).to.be.json;
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.have.keys('id', 'name', 'createdAt', 'updatedAt','userId');
+          expect(res.body.id).to.equal(data.id);
+          expect(res.body.name).to.equal(data.name);
+        });
+    });
 
-//         expect(res.body[0]).to.be.an('object');
-//         expect(res.body[0]).to.have.keys('id', 'name', 'createdAt', 'updatedAt','userId');
-
-//         expect(res.body[0].id).to.equal(data.id);
-//         expect(res.body[0].name).to.equal(data.name);
-//       });
-//   });
-// });
-
-//   it.only('should respond with a 400 for an invalid ID', function () {
-//     const badId = '99-99-99';
-//     const dbPromise = Folder.findOne({ _id:badId, userId: user.id });
-//     const apiPromise = chai.request(app)
-//       .get('/api/folders/99-99-99')
-//       .set('Authorization', `Bearer ${token}`);
-//     return Promise.all([dbPromise,apiPromise])
-//       .then(([data, res]) => {
+    it('should respond with a 400 for an invalid ID', function () {
+      const dbPromise = Folder.findOne({  userId: user.id });
+      const apiPromise = chai.request(app)
+        .get('/api/folders/99-99-99')
+        .set('Authorization', `Bearer ${token}`);
+      return Promise.all([dbPromise,apiPromise])
+        .then(([data, res]) => {
 
       
-//         expect(res).to.have.status(400);
-//         expect(res.body.message).to.eq('The `id` is not valid');
-//       });
-//   });
-// });
+          expect(res).to.have.status(400);
+          expect(res.body.message).to.eq('The `id` is not valid');
+        });
+    });
 
-//   it('should respond with a 404 for non-existant id', function () {
-//     const badId = 'AAAAAAAAAAAAAAAAAAAAAAAA';
-//     const dbPromise = Folder.findOne({ _id:badId, userId: user.id });
-//     const apiPromise = chai.request(app)
-//       .get('/api/folders/AAAAAAAAAAAAAAAAAAAAAAAA')
-//       .set('Authorization', `Bearer ${token}`);
-//     return Promise.all([dbPromise,apiPromise])
-//       .then(([data, res]) => {
 
-//         expect(res).to.have.status(404);
-//       });
-//   });
+    it('should respond with a 404 for non-existant id', function () {
+      
+      const dbPromise = Folder.findOne({  userId: user.id });
+      const apiPromise = chai.request(app)
+        .get('/api/folders/AAAAAAAAAAAAAAAAAAAAAAAA')
+        .set('Authorization', `Bearer ${token}`);
+      return Promise.all([dbPromise,apiPromise])
+        .then(([data, res]) => {
 
-// });});
+          expect(res).to.have.status(404);
+        });
+    });
+
+  });
+});
 
 // describe('POST /api/folders', function () {
 
