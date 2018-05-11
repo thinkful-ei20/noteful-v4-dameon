@@ -4,7 +4,10 @@
 // const chaiHttp = require('chai-http');
 // const mongoose = require('mongoose');
 
-// const { TEST_MONGODB_URI, JWT_SECRET } = require('../config');
+// const {
+//   TEST_MONGODB_URI,
+//   JWT_SECRET
+// } = require('../config');
 
 // const Folder = require('../models/folder');
 // const seedFolders = require('../db/seed/folders');
@@ -21,9 +24,9 @@
 // describe('Noteful API - Folders', function () {
 //   before(function () {
 //     return mongoose.connect(TEST_MONGODB_URI)
-//       .then(() =>  mongoose.connection.db.dropDatabase());
+//       .then(() => mongoose.connection.db.dropDatabase());
 //   });
-  
+
 
 //   // beforeEach(function () {
 //   //   return Promise.all([
@@ -33,7 +36,7 @@
 //   //   ]).then(([users]) => {
 //   //     user = users[0];
 //   //     token = jwt.sign({ user }, JWT_SECRET, { subject: user.username });
-      
+
 //   //   });
 //   // });
 //   beforeEach(function () {
@@ -48,7 +51,11 @@
 //       })
 //       .then(([users]) => {
 //         user = users[0];
-//         token = jwt.sign({ user }, JWT_SECRET, { subject: user.username });
+//         token = jwt.sign({
+//           user
+//         }, JWT_SECRET, {
+//           subject: user.username
+//         });
 //       });
 //   });
 
@@ -62,7 +69,9 @@
 
 //   describe('GET /api/folders', function () {
 //     it('should return the correct number of folders', function () {
-//       const dbPromise = Folder.find({ userId: user.id });
+//       const dbPromise = Folder.find({
+//         userId: user.id
+//       });
 //       const apiPromise = chai.request(app)
 //         .get('/api/folders')
 //         .set('Authorization', `Bearer ${token}`); // <<== Add this
@@ -75,14 +84,16 @@
 //           expect(res.body).to.have.length(data.length);
 //         });
 //     });
- 
+
 
 //     it('should return a list with the correct right fields', function () {
-//       const dbPromise = Folder.find({ userId: user.id }); // <<== Add filter on User Id
+//       const dbPromise = Folder.find({
+//         userId: user.id
+//       }); // <<== Add filter on User Id
 //       const apiPromise = chai.request(app)
 //         .get('/api/folders')
 //         .set('Authorization', `Bearer ${token}`);
-//       return Promise.all([dbPromise,apiPromise])
+//       return Promise.all([dbPromise, apiPromise])
 //         .then(([data, res]) => {
 //           expect(res).to.have.status(200);
 //           expect(res).to.be.json;
@@ -90,7 +101,7 @@
 //           expect(res.body).to.have.length(data.length);
 //           res.body.forEach(function (item) {
 //             expect(item).to.be.a('object');
-//             expect(item).to.have.keys('id', 'name', 'createdAt', 'updatedAt','userId');
+//             expect(item).to.have.keys('id', 'name', 'createdAt', 'updatedAt', 'userId');
 //           });
 //         });
 //     });
@@ -98,34 +109,38 @@
 
 
 //   describe('GET /api/folders/:id', function () {
-   
-    
+
+
 //     it('should return correct folder', function () {
-//       const dbPromise = Folder.findOne({  userId: user.id });
+//       const dbPromise = Folder.findOne({
+//         userId: user.id
+//       });
 //       const apiPromise = chai.request(app)
 //         .get('/api/folders/111111111111111111111100')
 //         .set('Authorization', `Bearer ${token}`);
-//       return Promise.all([dbPromise,apiPromise])
-        
+//       return Promise.all([dbPromise, apiPromise])
+
 //         .then(([data, res]) => {
 //           expect(res).to.have.status(200);
 //           expect(res).to.be.json;
 //           expect(res.body).to.be.an('object');
-//           expect(res.body).to.have.keys('id', 'name', 'createdAt', 'updatedAt','userId');
+//           expect(res.body).to.have.keys('id', 'name', 'createdAt', 'updatedAt', 'userId');
 //           expect(res.body.id).to.equal(data.id);
 //           expect(res.body.name).to.equal(data.name);
 //         });
 //     });
 
 //     it('should respond with a 400 for an invalid ID', function () {
-//       const dbPromise = Folder.findOne({  userId: user.id });
+//       const dbPromise = Folder.findOne({
+//         userId: user.id
+//       });
 //       const apiPromise = chai.request(app)
 //         .get('/api/folders/99-99-99')
 //         .set('Authorization', `Bearer ${token}`);
-//       return Promise.all([dbPromise,apiPromise])
+//       return Promise.all([dbPromise, apiPromise])
 //         .then(([data, res]) => {
 
-      
+
 //           expect(res).to.have.status(400);
 //           expect(res.body.message).to.eq('The `id` is not valid');
 //         });
@@ -133,12 +148,14 @@
 
 
 //     it('should respond with a 404 for non-existant id', function () {
-      
-//       const dbPromise = Folder.findOne({  userId: user.id });
+
+//       const dbPromise = Folder.findOne({
+//         userId: user.id
+//       });
 //       const apiPromise = chai.request(app)
 //         .get('/api/folders/AAAAAAAAAAAAAAAAAAAAAAAA')
 //         .set('Authorization', `Bearer ${token}`);
-//       return Promise.all([dbPromise,apiPromise])
+//       return Promise.all([dbPromise, apiPromise])
 //         .then(([data, res]) => {
 
 //           expect(res).to.have.status(404);
@@ -153,7 +170,7 @@
 //   it('should create and return a new item when provided valid data', function () {
 //     const newItem = {
 //       'name': 'newFolder',
-//       'userId':user.id
+//       'userId': user.id
 //     };
 //     let body;
 //     const apiPromise = chai.request(app)
@@ -161,27 +178,27 @@
 //       .set('Authorization', `Bearer ${token}`)
 //       .send(newItem);
 //     return Promise.all([apiPromise])
-             
-//       .then(function ([ res]) {
+
+//       .then(function ([res]) {
 //         body = res.body;
 //         expect(res).to.have.status(201);
 //         expect(res).to.have.header('location');
-          
+
 //         expect(res).to.be.json;
-          
+
 //         expect(body).to.be.a('object');
-          
+
 //         expect(body).to.include.keys('id', 'name');
-          
+
 //         return Folder.findById(body.id);
 //       })
 //       .then(data => {
-          
+
 //         expect(body.id).to.equal(data.id);
 //         expect(body.name).to.equal(data.name);
 //       });
 //   });
-// });
+
 
 //   it('should return an error when missing "name" field', function () {
 //     const newItem = {
@@ -191,10 +208,10 @@
 //       .get('/api/folders')
 //       .set('Authorization', `Bearer ${token}`)
 //       .send(newItem)
-//       .then(()=>{
+//       .then(() => {
 //         return Promise.all([apiPromise]);
 //       })
-//       .then(function([res]){
+//       .then(function ([res]) {
 //         console.log(res);
 //         expect(res).to.have.status(400);
 //         expect(res).to.be.json;
@@ -202,152 +219,151 @@
 //         expect(res.body.message).to.equal('Missing `name` in request body');
 //       });
 //   });
-// });
 
 
 
 
 
 
-//     it('should return an error when given a duplicate name', function () {
 
-//       const newItem = {
-//         'name': 'Archive'
-//       };
+//   it('should return an error when given a duplicate name', function () {
+
+//     const newItem = {
+//       'name': 'Archive'
+//     };
 
 
-//       const apiPromise = chai.request(app)
-//         .get('/api/folders')
-//         .set('Authorization', `Bearer ${token}`)
-//         .send(newItem)
-//         .then(function(res){
-          
-//           expect(res).to.have.status(400);
-//           expect(res).to.be.json;
-//           expect(res.body).to.be.a('object');
-//           expect(res.body.message).to.equal('Folder name already exists');
-//         });
-//     });
+//     const apiPromise = chai.request(app)
+//       .get('/api/folders')
+//       .set('Authorization', `Bearer ${token}`)
+//       .send(newItem)
+//       .then(function (res) {
+
+//         expect(res).to.have.status(400);
+//         expect(res).to.be.json;
+//         expect(res.body).to.be.a('object');
+//         expect(res.body.message).to.equal('Folder name already exists');
+//       });
 //   });
 // });
 
-//   describe('PUT /api/folders/:id', function () {
+// describe('PUT /api/folders/:id', function () {
 
-//     it('should update the folder', function () {
-//       const updateItem = {
-//         'name': 'Updated Name'
-//       };
-//       let data;
-//       return Folder.findOne().select('id name')
-//         .then(_data => {
-//           data = _data;
-//           return chai.request(app)
-//             .put(`/api/folders/${data.id}`)
-//             .send(updateItem);
-//         })
-//         .then(function (res) {
-//           expect(res).to.have.status(200);
-//           expect(res).to.be.json;
-//           expect(res.body).to.be.a('object');
-//           expect(res.body).to.include.keys('id', 'name');
+//   it('should update the folder', function () {
+//     const updateItem = {
+//       'name': 'Updated Name'
+//     };
+//     let data;
+//     return Folder.findOne().select('id name')
+//       .then(_data => {
+//         data = _data;
+//         return chai.request(app)
+//           .put(`/api/folders/${data.id}`)
+//           .send(updateItem);
+//       })
+//       .then(function (res) {
+//         expect(res).to.have.status(200);
+//         expect(res).to.be.json;
+//         expect(res.body).to.be.a('object');
+//         expect(res.body).to.include.keys('id', 'name');
 
-//           expect(res.body.id).to.equal(data.id);
-//           expect(res.body.name).to.equal(updateItem.name);
-//         });
-//     });
-
-
-//     it('should respond with a 400 for an invalid ID', function () {
-//       const updateItem = {
-//         'name': 'Blah'
-//       };
-//       const badId = '99-99-99';
-
-//       return chai.request(app)
-//         .put(`/api/folders/${badId}`)
-//         .send(updateItem)
-//         .catch(err => err.response)
-//         .then(res => {
-//           expect(res).to.have.status(400);
-//           expect(res.body.message).to.eq('The `id` is not valid');
-//         });
-//     });
-
-//     it('should respond with a 404 for an ID that does not exist', function () {
-//       const updateItem = {
-//         'name': 'Blah'
-//       };
-
-//       return chai.request(app)
-//         .put('/api/folders/AAAAAAAAAAAAAAAAAAAAAAAA')
-//         .send(updateItem)
-//         .catch(err => err.response)
-//         .then(res => {
-//           expect(res).to.have.status(404);
-//         });
-//     });
-
-//     it('should return an error when missing "name" field', function () {
-//       const updateItem = {
-//         'foo': 'bar'
-//       };
-
-//       return chai.request(app)
-//         .put('/api/folders/9999')
-//         .send(updateItem)
-//         .catch(err => err.response)
-//         .then(res => {
-//           expect(res).to.have.status(400);
-//           expect(res).to.be.json;
-//           expect(res.body).to.be.a('object');
-//           expect(res.body.message).to.equal('Missing `name` in request body');
-//         });
-//     });
-
-//     it('should return an error when given a duplicate name', function () {
-
-//       return Folder.find().select('id name').limit(2)
-//         .then(results => {
-//           const [item1, item2] = results;
-//           item1.name = item2.name;
-//           return chai.request(app).put(`/api/folders/${item1.id}`).send(item1);
-//         })
-//         .catch(err => err.response)
-//         .then(res => {
-//           expect(res).to.have.status(400);
-//           expect(res).to.be.json;
-//           expect(res.body).to.be.a('object');
-//           expect(res.body.message).to.equal('Folder name already exists');
-//         });
-//     });
-
+//         expect(res.body.id).to.equal(data.id);
+//         expect(res.body.name).to.equal(updateItem.name);
+//       });
 //   });
 
-//   describe('DELETE /api/folders/:id', function () {
 
-//     it('should delete an existing document and respond with 204', function () {
-//       let data;
-//       return Folder.findOne()
-//         .then( _data => {
-//           data = _data;
-//           return chai.request(app).delete(`/api/folders/${data.id}`);
-//         })
-//         .then(function (res) {
-//           expect(res).to.have.status(204);
-//           return Folder.count({_id : data.id});
-//         })
-//         .then( count => {
-//           expect(count).to.equal(0);
+//   it('should respond with a 400 for an invalid ID', function () {
+//     const updateItem = {
+//       'name': 'Blah'
+//     };
+//     const badId = '99-99-99';
+
+//     return chai.request(app)
+//       .put(`/api/folders/${badId}`)
+//       .send(updateItem)
+//       .catch(err => err.response)
+//       .then(res => {
+//         expect(res).to.have.status(400);
+//         expect(res.body.message).to.eq('The `id` is not valid');
+//       });
+//   });
+
+//   it('should respond with a 404 for an ID that does not exist', function () {
+//     const updateItem = {
+//       'name': 'Blah'
+//     };
+
+//     return chai.request(app)
+//       .put('/api/folders/AAAAAAAAAAAAAAAAAAAAAAAA')
+//       .send(updateItem)
+//       .catch(err => err.response)
+//       .then(res => {
+//         expect(res).to.have.status(404);
+//       });
+//   });
+
+//   it('should return an error when missing "name" field', function () {
+//     const updateItem = {
+//       'foo': 'bar'
+//     };
+
+//     return chai.request(app)
+//       .put('/api/folders/9999')
+//       .send(updateItem)
+//       .catch(err => err.response)
+//       .then(res => {
+//         expect(res).to.have.status(400);
+//         expect(res).to.be.json;
+//         expect(res.body).to.be.a('object');
+//         expect(res.body.message).to.equal('Missing `name` in request body');
+//       });
+//   });
+
+//   it('should return an error when given a duplicate name', function () {
+
+//     return Folder.find().select('id name').limit(2)
+//       .then(results => {
+//         const [item1, item2] = results;
+//         item1.name = item2.name;
+//         return chai.request(app).put(`/api/folders/${item1.id}`).send(item1);
+//       })
+//       .catch(err => err.response)
+//       .then(res => {
+//         expect(res).to.have.status(400);
+//         expect(res).to.be.json;
+//         expect(res.body).to.be.a('object');
+//         expect(res.body.message).to.equal('Folder name already exists');
+//       });
+//   });
+
+// });
+
+// describe('DELETE /api/folders/:id', function () {
+
+//   it('should delete an existing document and respond with 204', function () {
+//     let data;
+//     return Folder.findOne()
+//       .then(_data => {
+//         data = _data;
+//         return chai.request(app).delete(`/api/folders/${data.id}`);
+//       })
+//       .then(function (res) {
+//         expect(res).to.have.status(204);
+//         return Folder.count({
+//           _id: data.id
 //         });
-//     });
+//       })
+//       .then(count => {
+//         expect(count).to.equal(0);
+//       });
+//   });
 
-//     it('should respond with 404 when document does not exist', function () {
-//       return chai.request(app).delete('/api/folders/DOESNOTEXIST')
-//         .then((res) => {
-//           expect(res).to.have.status(204);
-//         });
-//     });
-
+//   it('should respond with 404 when document does not exist', function () {
+//     return chai.request(app).delete('/api/folders/DOESNOTEXIST')
+//       .then((res) => {
+//         expect(res).to.have.status(204);
+//       });
 //   });
 
 // });
